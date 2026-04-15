@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OtakuBox Bot — AI Anime Generator for Telegram</title>
+  <meta name="description" content="OtakuBox is a Telegram bot that generates anime images, sticker packs, emoji, and illustrated stories using Pollinations.ai — in 10 languages."/>
+  <meta property="og:title" content="OtakuBox Bot"/>
+  <meta property="og:description" content="AI-powered anime generator for Telegram. 40+ styles, sticker packs, stories, chat — powered by Pollinations.ai"/>
+  <meta property="og:image" content="https://image.pollinations.ai/prompt/anime%20girl%20glowing%20sakura%20petals%20cyberpunk%20city%20night?model=flux&width=1200&height=630&nologo=true"/>
+  <style>
+    :root {
+      --accent: #a855f7;
+      --accent2: #ec4899;
+      --bg: #0a0a0f;
+      --card: #13131f;
+      --border: #2a2a3f;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem 1.5rem 4rem;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(168,85,247,.25) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(236,72,153,.15) 0%, transparent 60%);
+    }
+    .hero-grid {
+      position: absolute; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(168,85,247,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(168,85,247,.06) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .hero > * { position: relative; z-index: 1; }
+
+    .badge-pollinations {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(168,85,247,.15);
+      border: 1px solid rgba(168,85,247,.4);
+      border-radius: 999px;
+      padding: .35rem 1rem;
+      font-size: .8rem;
+      color: #c084fc;
+      margin-bottom: 1.5rem;
+      text-decoration: none;
+      transition: background .2s;
+    }
+    .badge-pollinations:hover { background: rgba(168,85,247,.25); }
+    .badge-pollinations img { height: 18px; }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -.03em;
+      background: linear-gradient(135deg, #fff 30%, #c084fc 60%, #f472b6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+    }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      border: none; border-radius: 12px;
+      padding: .85rem 2rem;
+      font-size: 1rem; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 4px 24px rgba(168,85,247,.35);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(168,85,247,.5); }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: .85rem 2rem;
+      font-size: 1rem; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      transition: border-color .15s, background .15s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); background: rgba(168,85,247,.08); }
+
+    /* ── Gallery ── */
+    .gallery-section {
+      padding: 4rem 1.5rem;
+      text-align: center;
+    }
+    .section-label {
+      font-size: .75rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: .75rem;
+    }
+    .section-title {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800; margin-bottom: .75rem;
+    }
+    .section-sub { color: var(--muted); font-size: 1rem; margin-bottom: 2.5rem; }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .gallery-item {
+      border-radius: 16px; overflow: hidden;
+      border: 1px solid var(--border);
+      position: relative;
+      aspect-ratio: 1;
+      background: var(--card);
+    }
+    .gallery-item img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .3s;
+    }
+    .gallery-item:hover img { transform: scale(1.05); }
+    .gallery-item .style-tag {
+      position: absolute; bottom: 8px; left: 8px;
+      background: rgba(0,0,0,.7);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 6px;
+      padding: .2rem .5rem;
+      font-size: .72rem; color: #fff;
+    }
+
+    /* ── Features ── */
+    .features-section {
+      padding: 4rem 1.5rem;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-top: 2.5rem;
+    }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: border-color .2s, transform .2s;
+    }
+    .feature-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .feature-icon { font-size: 2rem; margin-bottom: .75rem; }
+    .feature-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: .4rem; }
+    .feature-card p { font-size: .9rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── Styles strip ── */
+    .styles-section {
+      padding: 4rem 1.5rem;
+      text-align: center;
+      background: linear-gradient(180deg, var(--bg) 0%, rgba(168,85,247,.05) 50%, var(--bg) 100%);
+    }
+    .styles-list {
+      display: flex; flex-wrap: wrap; gap: .5rem;
+      justify-content: center;
+      max-width: 900px; margin: 2rem auto 0;
+    }
+    .style-chip {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: .3rem .85rem;
+      font-size: .85rem; color: var(--muted);
+      transition: border-color .15s, color .15s;
+    }
+    .style-chip:hover { border-color: var(--accent); color: var(--text); }
+
+    /* ── Languages ── */
+    .langs-section {
+      padding: 3rem 1.5rem;
+      text-align: center;
+    }
+    .langs-row {
+      display: flex; flex-wrap: wrap; gap: .75rem;
+      justify-content: center; margin-top: 1.5rem;
+    }
+    .lang-chip {
+      display: flex; align-items: center; gap: .4rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .4rem .9rem;
+      font-size: .9rem;
+    }
+
+    /* ── Powered by ── */
+    .powered-section {
+      padding: 4rem 1.5rem;
+      text-align: center;
+      border-top: 1px solid var(--border);
+    }
+    .powered-card {
+      max-width: 580px; margin: 2rem auto 0;
+      background: var(--card);
+      border: 1px solid rgba(168,85,247,.3);
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+    }
+    .powered-logo { height: 36px; margin-bottom: 1rem; }
+    .powered-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: .6rem; }
+    .powered-card p { color: var(--muted); font-size: .95rem; line-height: 1.7; margin-bottom: 1.5rem; }
+    .powered-uses {
+      display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin-bottom: 1.5rem;
+    }
+    .use-tag {
+      background: rgba(168,85,247,.15);
+      border: 1px solid rgba(168,85,247,.3);
+      border-radius: 8px;
+      padding: .25rem .7rem;
+      font-size: .8rem; color: #c084fc;
+    }
+    .powered-badge {
+      display: inline-block;
+      text-decoration: none;
+      margin-top: .5rem;
+    }
+    .powered-badge img { height: 28px; }
+
+    /* ── CTA ── */
+    .cta-section {
+      padding: 5rem 1.5rem;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute; inset: 0; z-index: 0;
+      background: radial-gradient(ellipse 70% 80% at 50% 50%, rgba(168,85,247,.12) 0%, transparent 70%);
+    }
+    .cta-section > * { position: relative; z-index: 1; }
+    .cta-section h2 {
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      font-weight: 800; margin-bottom: 1rem;
+      background: linear-gradient(135deg, #fff, #c084fc);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .cta-section p { color: var(--muted); font-size: 1.05rem; margin-bottom: 2rem; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      .gallery { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <a class="badge-pollinations" href="https://pollinations.ai" target="_blank" rel="noopener">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#a855f7"/><path d="M8 12c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+    Powered by Pollinations.ai
+  </a>
+
+  <h1>OtakuBox Bot</h1>
+  <p>AI-powered anime generator right in Telegram — create stunning images, sticker packs, emoji, and illustrated stories in 40+ styles across 10 languages.</p>
+
+  <div class="hero-btns">
+    <a class="btn-primary" href="https://t.me/OtakuBoxbot" target="_blank" rel="noopener">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.95 8.1l-2.02 9.52c-.15.68-.54.84-1.09.52l-3-2.21-1.45 1.4c-.16.16-.3.3-.61.3l.21-3.04 5.5-4.96c.24-.21-.05-.33-.37-.12L6.4 14.44l-2.96-.93c-.64-.2-.65-.64.14-.95l11.59-4.47c.53-.19 1 .13.78.01z"/></svg>
+      Open in Telegram
+    </a>
+    <a class="btn-secondary" href="https://pollinations.ai" target="_blank" rel="noopener">
+      pollinations.ai ↗
+    </a>
+  </div>
+</section>
+
+<!-- ── GALLERY ── -->
+<section class="gallery-section">
+  <p class="section-label">Gallery</p>
+  <h2 class="section-title">Generated with Pollinations.ai</h2>
+  <p class="section-sub">Every image is created on-demand using the Pollinations.ai API</p>
+
+  <div class="gallery">
+    <div class="gallery-item">
+      <img src="https://image.pollinations.ai/prompt/anime%20girl%20cherry%20blossoms%20katana%20sunset%20soft%20light?model=flux&width=512&height=512&seed=101&nologo=true" alt="Anime style" loading="lazy"/>
+      <span class="style-tag">Anime</span>
+    </div>
+    <div class="gallery-item">
+      <img src="https://image.pollinations.ai/prompt/cyberpunk%20anime%20samurai%20neon%20rain%20city%20blue%20glow?model=flux&width=512&height=512&seed=202&nologo=true" alt="Cyberpunk style" loading="lazy"/>
+      <span class="style-tag">Cyberpunk</span>
+    </div>
+    <div class="gallery-item">
+      <img src="https://image.pollinations.ai/prompt/chibi%20kawaii%20anime%20girl%20pastel%20colors%20flowers?model=flux&width=512&height=512&seed=303&nologo=true" alt="Chibi Kawaii style" loading="lazy"/>
+      <span class="style-tag">Chibi Kawaii</span>
+    </div>
+    <div class="gallery-item">
+      <img src="https://image.pollinations.ai/prompt/anime%20fantasy%20dragon%20knight%20epic%20sky%20magic?model=flux&width=512&height=512&seed=404&nologo=true" alt="Fantasy style" loading="lazy"/>
+      <span class="style-tag">Fantasy</span>
+    </div>
+    <div class="gallery-item">
+      <img src="https://image.pollinations.ai/prompt/pixel%20art%20anime%20hero%20retro%208bit%20adventure?model=flux&width=512&height=512&seed=505&nologo=true" alt="Pixel Art style" loading="lazy"/>
+      <span class="style-tag">Pixel Art</span>
+    </div>
+    <div class="gallery-item">
+      <img src="https://image.pollinations.ai/prompt/watercolor%20anime%20girl%20rain%20umbrella%20soft%20pastel?model=flux&width=512&height=512&seed=606&nologo=true" alt="Watercolor style" loading="lazy"/>
+      <span class="style-tag">Watercolor</span>
+    </div>
+    <div class="gallery-item">
+      <img src="https://image.pollinations.ai/prompt/steampunk%20anime%20inventor%20goggles%20gears%20brass?model=flux&width=512&height=512&seed=707&nologo=true" alt="Steampunk style" loading="lazy"/>
+      <span class="style-tag">Steampunk</span>
+    </div>
+    <div class="gallery-item">
+      <img src="https://image.pollinations.ai/prompt/manga%20black%20white%20ink%20anime%20warrior%20dramatic?model=flux&width=512&height=512&seed=808&nologo=true" alt="Manga style" loading="lazy"/>
+      <span class="style-tag">Manga</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ── -->
+<section class="features-section">
+  <p class="section-label" style="text-align:center">Features</p>
+  <h2 class="section-title" style="text-align:center">Everything an anime fan needs</h2>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🎨</div>
+      <h3>AI Image Generation</h3>
+      <p>Generate anime art from text prompts or your photos. 40+ unique styles — from Anime and Manga to Cyberpunk, Watercolor, and Pixel Art. Powered by Pollinations.ai.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏷️</div>
+      <h3>Telegram Sticker Packs</h3>
+      <p>Create full sticker packs (6–20 stickers) with custom themes: Sports, Reactions, Fantasy, Professions and more. Published directly to your Telegram account.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">😊</div>
+      <h3>Custom Emoji</h3>
+      <p>Generate unique animated-style emoji with transparent backgrounds. Single emoji free; packs of 10 available with no watermark.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📖</div>
+      <h3>Illustrated Stories</h3>
+      <p>AI writes unique anime adventures in three lengths (1k / 2k / 5k chars). Every story gets an auto-generated Pollinations.ai illustration.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💬</div>
+      <h3>AI Anime Chat</h3>
+      <p>Chat with your personal anime hero companion. Remembers your name, age, and interests. GPT-4o with Gemini fallback.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🥷</div>
+      <h3>Secret Shinobi</h3>
+      <p>Anonymous matchmaking chat. Get paired with a random user, receive a pseudonym like "Clever Samurai", and chat secretly.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎮</div>
+      <h3>Mini Games</h3>
+      <p>Magic Ball, Dice, Rock-Paper-Scissors, Tic-Tac-Toe, Minesweeper, Tank Battle and more — all free, playable directly in Telegram.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔮</div>
+      <h3>Daily Horoscope & Fortune</h3>
+      <p>Personalized daily fortune and horoscope for all 12 zodiac signs. Delivered at 7:00 local time using 50+ city timezones.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📢</div>
+      <h3>Automated Channel</h3>
+      <p>10+ scheduled posts daily: Story of the Day, Art, Character of the Day, Anime Quiz, Sticker of the Day, Weekly Digest and more.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── STYLES ── -->
+<section class="styles-section">
+  <p class="section-label">40+ Art Styles</p>
+  <h2 class="section-title">Pick your aesthetic</h2>
+  <p class="section-sub">All generated live via the Pollinations.ai API</p>
+  <div class="styles-list">
+    <span class="style-chip">Anime</span>
+    <span class="style-chip">Manga</span>
+    <span class="style-chip">Cyberpunk</span>
+    <span class="style-chip">Chibi</span>
+    <span class="style-chip">Kawaii</span>
+    <span class="style-chip">Fantasy</span>
+    <span class="style-chip">Sci-Fi</span>
+    <span class="style-chip">Steampunk</span>
+    <span class="style-chip">Pixel Art</span>
+    <span class="style-chip">Watercolor</span>
+    <span class="style-chip">Oil Painting</span>
+    <span class="style-chip">Sketch</span>
+    <span class="style-chip">Comic</span>
+    <span class="style-chip">Gothic</span>
+    <span class="style-chip">Impressionist</span>
+    <span class="style-chip">Surrealist</span>
+    <span class="style-chip">Pop Art</span>
+    <span class="style-chip">3D Pixar</span>
+    <span class="style-chip">Cartoon</span>
+    <span class="style-chip">Realistic</span>
+    <span class="style-chip">Sticker</span>
+    <span class="style-chip">Logo</span>
+    <span class="style-chip">Neon</span>
+    <span class="style-chip">Pastel</span>
+    <span class="style-chip">Dark Fantasy</span>
+    <span class="style-chip">Mecha</span>
+    <span class="style-chip">Isekai</span>
+    <span class="style-chip">Shoujo</span>
+    <span class="style-chip">Seinen</span>
+    <span class="style-chip">Retro 90s Anime</span>
+    <span class="style-chip">Ukiyo-e</span>
+    <span class="style-chip">Low Poly</span>
+    <span class="style-chip">Line Art</span>
+    <span class="style-chip">Ghibli-Inspired</span>
+    <span class="style-chip">Vintage</span>
+    <span class="style-chip">Noir</span>
+    <span class="style-chip">Graffiti</span>
+    <span class="style-chip">Holographic</span>
+    <span class="style-chip">Abstract</span>
+    <span class="style-chip">Concept Art</span>
+  </div>
+</section>
+
+<!-- ── LANGUAGES ── -->
+<section class="langs-section">
+  <p class="section-label">Languages</p>
+  <h2 class="section-title">10 languages supported</h2>
+  <div class="langs-row">
+    <span class="lang-chip">🇺🇦 Українська</span>
+    <span class="lang-chip">🇬🇧 English</span>
+    <span class="lang-chip">🇵🇱 Polski</span>
+    <span class="lang-chip">🇩🇪 Deutsch</span>
+    <span class="lang-chip">🇫🇷 Français</span>
+    <span class="lang-chip">🇪🇸 Español</span>
+    <span class="lang-chip">🇮🇹 Italiano</span>
+    <span class="lang-chip">🇯🇵 日本語</span>
+    <span class="lang-chip">🇹🇷 Türkçe</span>
+    <span class="lang-chip">🇨🇳 中文</span>
+  </div>
+</section>
+
+<!-- ── POWERED BY POLLINATIONS ── -->
+<section class="powered-section">
+  <p class="section-label">Technology</p>
+  <h2 class="section-title">Built with Pollinations.ai</h2>
+
+  <div class="powered-card">
+    <div style="font-size:2.5rem;margin-bottom:.75rem">🌸</div>
+    <h3>Pollinations.ai API</h3>
+    <p>All image generation in OtakuBox is powered by the Pollinations.ai free API — enabling fast, high-quality AI art accessible to everyone without requiring API keys from users.</p>
+    <div class="powered-uses">
+      <span class="use-tag">Image generation</span>
+      <span class="use-tag">Sticker packs</span>
+      <span class="use-tag">Custom emoji</span>
+      <span class="use-tag">Story illustrations</span>
+      <span class="use-tag">Daily channel art</span>
+      <span class="use-tag">Character of the Day</span>
+    </div>
+    <a class="powered-badge" href="https://pollinations.ai" target="_blank" rel="noopener">
+      <img src="https://image.pollinations.ai/prompt/built%20with%20pollinations%20badge%20purple%20minimal?model=flux&width=200&height=60&nologo=true&seed=999" alt="Built with Pollinations.ai" style="border-radius:8px;height:40px;width:auto;"/>
+    </a>
+    <br/>
+    <a href="https://pollinations.ai" target="_blank" rel="noopener" style="color:var(--accent);font-size:.9rem;text-decoration:none;display:inline-block;margin-top:.75rem;">pollinations.ai →</a>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section">
+  <h2>Start creating now</h2>
+  <p>Free to use · No sign-up required · Works on any device with Telegram</p>
+  <a class="btn-primary" href="https://t.me/OtakuBoxbot" target="_blank" rel="noopener" style="font-size:1.1rem;padding:1rem 2.5rem;">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.95 8.1l-2.02 9.52c-.15.68-.54.84-1.09.52l-3-2.21-1.45 1.4c-.16.16-.3.3-.61.3l.21-3.04 5.5-4.96c.24-.21-.05-.33-.37-.12L6.4 14.44l-2.96-.93c-.64-.2-.65-.64.14-.95l11.59-4.47c.53-.19 1 .13.78.01z"/></svg>
+    Open @OtakuBoxbot
+  </a>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <p>OtakuBox Bot · AI image generation powered by <a href="https://pollinations.ai" target="_blank" rel="noopener">pollinations.ai</a></p>
+</footer>
+
+</body>
+</html>
