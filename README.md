@@ -22,6 +22,7 @@ generation API.
 
 ### Features
 
+**Visual generation**
 - 🎨 **40+ anime image styles** — Studio Ghibli, shōnen, shōjo, cyberpunk,
   watercolor, manga ink, chibi, mecha, and more (Fast & HQ tiers)
 - 🧩 **Custom emoji packs** — generate themed Telegram emoji sets (6/12/20)
@@ -29,16 +30,44 @@ generation API.
   single theme prompt
 - 📖 **Daily illustrated stories** — multi-panel anime stories with cover art,
   scenes, and narrative text
-- 📡 **Channel auto-posts** — Character of the Day, Sticker of the Day,
-  Art of the Day, weekly digests (APScheduler)
+- 📸 **Photo → Anime, Manga Panels, Character Card, Avatar, Collage,
+  Profile Card, Ship Art** — purpose-built image flows
+
+**AI & chat**
 - 💬 **AI chat with memory** — multi-turn conversations powered by OpenAI
   (GPT-4o-mini) with Gemini fallback
+- 🌸 **Personal Waifu / Husbando** — your own AI character (name + description
+  → art + levels 1–5)
+- 🎯 **AI anime recommendations** — based on your watchlist
 - 🥷 **Secret Shinobi** — anonymous matchmaking chat with content filtering
-- 🔮 **Daily horoscope & predictions** — personalised, illustrated
+
+**Games & community**
 - 🎮 **Mini-games** — Tic-Tac-Toe, Big TTT, Minesweeper, Dots & Boxes,
   Battleship, Snake, 2048, Tanks, Brick Blaster, Shooter (solo + PvP)
-- ⚡ **Energy economy** — daily refills, ad rewards, Telegram Stars
-  micro-payments, referral bonuses
+- 🃏 **Collectible cards** — collect, battle, trade
+- ⚔️ **Waifu Duel** — head-to-head AI battles vs random opponents
+- 🏆 **Weekly art challenge** — themed contest + voting + energy prizes
+- 🖼 **Community gallery** — share, vote, earn energy
+- 📊 **Leaderboards** — top by games / generations / referrals (weekly + all-time)
+
+**Daily engagement**
+- 🎌 **Anime Passport** — your fan profile card
+- ✅ **Daily missions** — 3 missions/day with rewards
+- 🔥 **Streak system** — daily logins with freeze items
+- 📅 **Seasonal events** — 12 themed events/year with badges
+- 🌐 **Japanese word of the day**
+- 🎯 **Anime trivia & "Guess the anime"** — daily quizzes
+- 📺 **Watchlist** — track planned / watching / completed anime
+- 🔮 **Daily horoscope & predictions** — personalised, illustrated
+- 🏅 **Achievements** — unlockable badges with progress
+
+**Economy**
+- ⚡ **Energy economy** — daily refills, ad rewards (Adsgram), Telegram Stars
+  micro-payments, referral bonuses, energy gifts to friends
+
+**Other**
+- 📡 **Channel auto-posts** — Character of the Day, Sticker of the Day,
+  Art of the Day, weekly digests (APScheduler)
 - 🌍 **10-language UI** — Ukrainian, English, Polish, German, French, Spanish,
   Italian, Japanese, Turkish, Chinese
 
